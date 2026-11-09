@@ -1011,3 +1011,30 @@ dialog.modal::backdrop { background: rgba(18, 14, 10, .4); backdrop-filter: blur
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .respira :checked ~ *, .respira :checked ~ * .fase { animation-duration: 14s !important; animation-iteration-count: infinite !important; }
 }
+
+/* ---------- Modo mirada ---------- */
+#mirada[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.mirada-punto {
+  position: fixed; left: 0; top: 0; z-index: 9998; width: 40px; height: 40px; margin: -20px 0 0 -20px;
+  pointer-events: none; transition: transform .08s linear; --progreso: 0;
+}
+.mirada-punto::before {
+  content: ''; position: absolute; inset: 14px; border-radius: 50%;
+  background: var(--accent); opacity: .55; box-shadow: 0 0 18px 4px rgba(var(--mota), .45);
+}
+.mirada-punto svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.mirada-anillo { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--progreso) * 100); }
+.mirada-foco { outline: 2px solid var(--accent) !important; outline-offset: 4px; }
+.mirada-calibracion { position: fixed; inset: 0; z-index: 9997; background: color-mix(in srgb, var(--bg) 92%, transparent); }
+.mirada-instrucciones {
+  position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); width: min(30rem, calc(100% - 32px));
+  text-align: center; font-family: var(--texto-corrido); color: var(--ink);
+}
+.mirada-objetivo {
+  position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; cursor: pointer; --hecho: 0;
+  border: 2px solid var(--accent); background: color-mix(in srgb, var(--grave) calc((1 - var(--hecho)) * 100%), var(--accent-soft));
+  transition: background-color .3s, opacity .3s;
+}
+.mirada-objetivo:disabled { opacity: .25; cursor: default; }
+/* La vista previa de la cámara de WebGazer, durante la calibración */
+#webgazerVideoContainer { z-index: 9999 !important; border-radius: 8px; overflow: hidden; }
