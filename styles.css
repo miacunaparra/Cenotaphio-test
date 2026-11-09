@@ -1027,7 +1027,7 @@ dialog.modal::backdrop { background: rgba(18, 14, 10, .4); backdrop-filter: blur
 .mirada-foco { outline: 2px solid var(--accent) !important; outline-offset: 4px; }
 .mirada-calibracion { position: fixed; inset: 0; z-index: 9997; background: color-mix(in srgb, var(--bg) 92%, transparent); }
 .mirada-instrucciones {
-  position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); width: min(30rem, calc(100% - 32px));
+  position: absolute; left: 50%; top: 31%; transform: translate(-50%, -50%); width: min(30rem, calc(100% - 32px));
   text-align: center; font-family: var(--texto-corrido); color: var(--ink);
 }
 .mirada-objetivo {
@@ -1037,4 +1037,8 @@ dialog.modal::backdrop { background: rgba(18, 14, 10, .4); backdrop-filter: blur
 }
 .mirada-objetivo:disabled { opacity: .25; cursor: default; }
 /* La vista previa de la cámara de WebGazer, durante la calibración */
-#webgazerVideoContainer { z-index: 9999 !important; border-radius: 8px; overflow: hidden; }
+/* Centrada entre la fila del medio y la de abajo, donde no hay puntos */
+#webgazerVideoContainer {
+  z-index: 9999 !important; border-radius: 8px; overflow: hidden;
+  top: 69% !important; left: 50% !important; transform: translate(-50%, -50%);
+}

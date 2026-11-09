@@ -107,6 +107,8 @@
     try {
       await cargarLibreria();
       webgazer.params.showVideoPreview = true;
+      webgazer.params.videoViewerWidth = 200;   // más pequeña, para que quepa entre los puntos
+      webgazer.params.videoViewerHeight = 150;
       webgazer.saveDataAcrossSessions(false);
       await webgazer.setRegression('ridge').setGazeListener(alMirar).begin();
       webgazer.showPredictionPoints(false);
