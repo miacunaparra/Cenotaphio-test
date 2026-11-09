@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cenotaphio</title>
+  <meta name="description" content="Prototipo de Cenotaphio: un archivo de pertenencias y memorias para madres que acompañan el recuerdo de sus hijos/as.">
+  <script>try { var t = localStorage.getItem('memento.tema'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       CÓMO EDITAR LOS TEXTOS DE ESTA PÁGINA
+       Todo lo que se lee en la página está en este archivo:
+       1. Las páginas (Inicio, Colección, Perfil, Recuerdo) → busca "1. INICIO", "2. COLECCIÓN", etc.
+       2. Las ventanas para crear y editar → busca "Ventanas".
+       3. Los mensajes que aparecen al usar la página → busca "TEXTOS QUE APARECEN".
+       4. Los perfiles de ejemplo → busca "PERFILES DE EJEMPLO".
+       Cambia solo las palabras entre > y <, guarda el archivo y recarga el navegador.
+       Las líneas que empiezan con <!-- son notas como esta: no se ven en la página.
+       ═══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- ============ Íconos (se usan con <svg><use href="#i-..."/></svg>) ============ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <!-- Objetos: dibujos lineales 64×64. La clase "t" tapa las líneas de atrás con el color de fondo. -->
+    <symbol id="i-zapatito" viewBox="0 0 64 64"><path d="M25 27v-8h9v10"/><path class="t" d="M12 44c0-9 5-17 13-17h4c2 5 7 9 15 10 7 1 10 4 10 8v2H12z"/><path d="M29 32l5-2M31 35.5l5-2"/><path d="M12 47c0 2 1 3 3 3h36c2 0 3-1 3-3"/></symbol>
+    <symbol id="i-osito" viewBox="0 0 64 64"><circle cx="23" cy="14.5" r="4"/><circle cx="41" cy="14.5" r="4"/><circle cx="21" cy="40" r="4"/><circle cx="43" cy="40" r="4"/><circle cx="25" cy="54" r="4"/><circle cx="39" cy="54" r="4"/><ellipse class="t" cx="32" cy="45" rx="12" ry="11"/><circle class="t" cx="32" cy="23" r="10"/><ellipse cx="32" cy="26.5" rx="4" ry="3"/><circle cx="28" cy="21" r=".9" fill="currentColor"/><circle cx="36" cy="21" r=".9" fill="currentColor"/></symbol>
+    <symbol id="i-mechon" viewBox="0 0 64 64"><path d="M27 10c-7 11 7 18 0 29-4 6-2 12 3 14"/><path d="M32 10c-6 11 8 18 1 29-4 6-2 12 4 14"/><path d="M37 10c-5 11 9 18 2 29-3 5-1 10 3 12"/><path d="M24 27h20"/><path d="M34 27c-5-6-11-3-6 1M34 27c5-6 11-3 6 1"/><path d="M33 27l-4 8M35 27l4 8"/></symbol>
+    <symbol id="i-pulsera" viewBox="0 0 64 64"><ellipse cx="32" cy="34" rx="21" ry="11"/><ellipse cx="32" cy="34" rx="17" ry="7.5"/><rect class="t" x="22" y="37" width="20" height="9" rx="1.5"/><path d="M25 40.5h10M25 43h6"/></symbol>
+    <symbol id="i-chupete" viewBox="0 0 64 64"><circle cx="32" cy="15" r="6"/><path d="M32 21v3"/><path d="M28 35c-1 9 1 14 4 14s5-5 4-14"/><ellipse class="t" cx="32" cy="30" rx="15" ry="6"/></symbol>
+    <symbol id="i-foto" viewBox="0 0 64 64"><g transform="rotate(-4 32 32)"><rect x="14" y="10" width="36" height="44" rx="1.5"/><rect x="18" y="14" width="28" height="28"/><circle cx="38" cy="21" r="3"/><path d="M18 38l8-8 6 6 4-4 10 8"/></g></symbol>
+    <symbol id="i-ecografia" viewBox="0 0 64 64"><rect x="10" y="14" width="44" height="36" rx="2"/><path d="M32 19L18 42a17 17 0 0 0 28 0z"/><path d="M28 34c0-4 5-5 7-2s1 7-3 7-4-2-4-5z"/></symbol>
+    <symbol id="i-carta" viewBox="0 0 64 64"><rect x="11" y="18" width="42" height="29" rx="1.5"/><path d="M11 19l21 16 21-16"/><path d="M11 47l16-13M53 47L37 34"/></symbol>
+    <symbol id="i-dibujo" viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="1.5"/><circle cx="42" cy="22" r="4"/><path d="M42 14.5v2M42 27.5v2M34.5 22h2M47.5 22h2"/><path d="M18 46V35l8-7 8 7v11z"/><path d="M24 46v-5h4v5"/></symbol>
+    <symbol id="i-vhs" viewBox="0 0 64 64"><rect x="9" y="19" width="46" height="28" rx="2"/><rect x="15" y="23" width="34" height="7" rx="1"/><circle cx="23" cy="38" r="4"/><circle cx="41" cy="38" r="4"/><path d="M27 38h10"/></symbol>
+    <symbol id="i-cajita" viewBox="0 0 64 64"><path d="M13 25l19-8 19 8v21l-19 8-19-8z"/><path d="M13 25l19 8 19-8M32 33v21"/><path d="M22 21l19 8v8"/></symbol>
+    <symbol id="i-mantita" viewBox="0 0 64 64"><path d="M12 18h40v28H12z"/><path d="M12 25h40M12 39h40"/><path d="M18 46v4M24 46v4M30 46v4M36 46v4M42 46v4M48 46v4"/></symbol>
+    <symbol id="i-autito" viewBox="0 0 64 64"><path d="M9 41v-7l6-3 7-9h17l8 9 8 2v8z"/><path d="M24.5 24.5l-4 5.5h9.5v-5.5zM33 24.5V30h10l-4.5-5.5z"/><circle class="t" cx="20" cy="42" r="5"/><circle class="t" cx="44" cy="42" r="5"/></symbol>
+    <symbol id="i-flor" viewBox="0 0 64 64"><path d="M32 30v24M32 45c-6-1-10-5-10-10 6 1 10 5 10 10z"/><circle cx="32" cy="13" r="5"/><circle cx="24" cy="20" r="5"/><circle cx="40" cy="20" r="5"/><circle cx="27" cy="28" r="5"/><circle cx="37" cy="28" r="5"/><circle class="t" cx="32" cy="21" r="4"/></symbol>
+    <symbol id="i-diente" viewBox="0 0 64 64"><path d="M22 14c-6 0-8 8-4 16 2 6 2 20 6 20s4-12 8-12 4 12 8 12 4-14 6-20c4-8 2-16-4-16-4 0-6 2-10 2s-6-2-10-2z"/></symbol>
+    <symbol id="i-sonajero" viewBox="0 0 64 64"><circle cx="32" cy="21" r="11"/><circle cx="32" cy="21" r="5"/><path d="M32 32v18"/><circle cx="32" cy="54" r="3.5"/><path d="M29 37h6"/></symbol>
+    <!-- Interfaz -->
+    <symbol id="u-luna" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+    <symbol id="u-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></symbol>
+    <symbol id="u-mas" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="u-hilo" viewBox="0 0 24 24"><circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M8 8.5c4 1 5 5 8 7"/></symbol>
+    <symbol id="u-izq" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="u-der" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="u-texto" viewBox="0 0 24 24"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13"/></symbol>
+    <symbol id="u-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/></symbol>
+    <symbol id="u-enlace" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+    <symbol id="u-podcast" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+    <symbol id="u-comunidad" viewBox="0 0 24 24"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c.5-3 2.5-5 5-5s4.5 2 5 5M11 19c.5-3 2.5-5 5-5s4.5 2 5 5"/></symbol>
+  </svg>
+
+  <canvas id="polvo" aria-hidden="true"></canvas>
+
+  <header class="barra">
+    <a class="marca gruta-titulo" href="#/"><span class="" aria-hidden="true"></span>Cenotaphio</a>
+    <nav class="nav" id="nav-principal" aria-label="Principal">
+      <a href="#/" data-nav="inicio">Inicio</a>
+      <a href="#/coleccion" data-nav="coleccion">Mi altar</a>
+      <a href="#/explorar" data-nav="explorar">Explorar</a>
+      <span class="cuenta-correo" id="cuenta-correo" hidden></span>
+      <button class="btn-texto" id="cerrar-sesion" type="button" hidden>Cerrar sesión</button>
+      <button class="btn-icono" id="tema" type="button" aria-label="Cambiar entre modo día y noche" title="Modo día / noche">
+        <svg class="solo-claro"><use href="#u-luna"/></svg>
+        <svg class="solo-oscuro"><use href="#u-sol"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <dialog id="acceso" class="modal" aria-labelledby="acceso-titulo">
+    <section class="modal-caja acceso-caja">
+      <p class="antetitulo">Tu espacio privado</p>
+      <h1 class="gruta-titulo" id="acceso-titulo">Iniciar sesión</h1>
+      <p>Entra o crea una cuenta para guardar tus altares y recuerdos con respaldo privado.</p>
+      <form id="form-acceso" class="formulario">
+        <label class="campo"><span>Correo electrónico</span><input type="email" name="email" autocomplete="email" required></label>
+        <label class="campo" id="campo-clave"><span>Contraseña</span><input type="password" name="password" autocomplete="current-password" minlength="8" required></label>
+        <div class="formulario-acciones">
+          <button class="btn btn-principal" id="entrar" type="submit">Iniciar sesión</button>
+          <button class="btn btn-suave" id="crear-cuenta" type="button">Crear cuenta</button>
+        </div>
+        <button class="btn-texto" id="recuperar-clave" type="button">Olvidé mi contraseña</button>
+      </form>
+      <form id="form-nueva-clave" class="formulario" hidden>
+        <label class="campo"><span>Nueva contraseña</span><input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+        <div class="formulario-acciones"><button class="btn btn-principal" type="submit">Guardar contraseña</button></div>
+      </form>
+      <p id="acceso-mensaje" class="acceso-mensaje" role="status" aria-live="polite"></p>
+      <button class="btn btn-suave" id="reintentar-carga" type="button" hidden>Reintentar carga del respaldo</button>
+      <button class="btn btn-texto" id="cerrar-sesion-acceso" type="button" hidden>Cerrar sesión</button>
+      <button class="btn btn-texto" id="seguir-explorando" type="button">Seguir explorando</button>
+    </section>
+  </dialog>
+
+  <main id="vista">
+
+    <!-- ================= 1. INICIO ================= -->
+    <section data-vista="inicio">
+      <section class="portada">
+        <div>
+          <p class="antetitulo">Archivo de memorias</p>
+          <h1 class="gruta-titulo">Cenotaphio</h1>
+          <p class="lema">Cenotaphio es un espacio dedicado al archivo translúcido.</p>
+          <div class="acciones">
+            <a class="btn btn-principal" href="#/coleccion">Mi altar</a>
+            <a class="btn btn-suave" href="#apoyo">Materiales de apoyo</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="cita">
+        <blockquote>“Contamos o escribimos historias para aplazar la muerte.”<cite>Gabriele Schwab</cite></blockquote>
+      </section>
+
+      <section class="seccion">
+        <div class="seccion-cabeza">
+          <div>
+            <p class="antetitulo">Sobre el proyecto</p>
+            <h2>Un cenotafio digital, compuesto de objetos memorables</h2>
+          </div>
+          <p>Cenotaphio es un archivo de pertenencias pensado para honrar cuyos hijos e hijas fallecieron a temprana edad. Como un altar, es un espacio donde una pulsera de hospital, un mechón de pelo o unos zapatitos siguen contando quiénes fueron.</p>
+        </div>
+        <div class="pasos">
+          <article class="paso">
+            <span class="num">i.</span>
+            <h3>Guardar</h3>
+            <p>Sube los recuerdos a tu ritmo, sin apuro: una fotografía, una fecha, unas palabras. El archivo crece contigo.</p>
+          </article>
+          <article class="paso">
+            <span class="num">ii.</span>
+            <h3>Recordar</h3>
+            <p>Mira cada objeto de cerca, con su historia, dónde lo guardas y lo que te hace sentir al tocarlo.</p>
+          </article>
+          <article class="paso">
+            <span class="num">iii.</span>
+            <h3>Unir</h3>
+            <p>Tiende hilos entre recuerdos y descubre cómo se conectan: un mismo día, una misma mano, una misma canción.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="seccion" id="apoyo">
+        <div class="seccion-cabeza">
+          <div>
+            <p class="antetitulo">Acompañamiento</p>
+            <h2>Materiales de apoyo</h2>
+          </div>
+          <p>Lecturas, videos y espacios de encuentro para transitar el duelo en compañía. El duelo también es colectivo.</p>
+        </div>
+        <!-- Placeholders: reemplazar por enlaces reales -->
+        <div class="apoyo-grid">
+          <article class="material">
+            <span class="material-tipo"><svg><use href="#u-texto"/></svg>Texto<span class="etiqueta-ejemplo">ejemplo</span></span>
+            <h3>¿Qué es el duelo perinatal?</h3>
+            <p>Una introducción suave a lo que se vive tras una pérdida temprana, y por qué es un duelo real.</p>
+            <span class="material-meta"><span>Lectura · 8 min</span><span class="flecha" aria-hidden="true">→</span></span>
+          </article>
+          <article class="material">
+            <span class="material-tipo"><svg><use href="#u-enlace"/></svg>Enlace<span class="etiqueta-ejemplo">ejemplo</span></span>
+            <h3>Ley Dominga: tus derechos</h3>
+            <p>Qué establece la ley y cómo acompaña a madres y familias en los centros de salud.</p>
+            <span class="material-meta"><span>Guía · enlace externo</span><span class="flecha" aria-hidden="true">→</span></span>
+          </article>
+          <article class="material">
+            <span class="material-tipo"><svg><use href="#u-video"/></svg>Video<span class="etiqueta-ejemplo">ejemplo</span></span>
+            <h3>Hablar de quien partió</h3>
+            <p>Testimonios de madres que encontraron palabras para nombrar a sus hijes.</p>
+            <span class="material-meta"><span>Video · 12 min</span><span class="flecha" aria-hidden="true">→</span></span>
+          </article>
+          <article class="material">
+            <span class="material-tipo"><svg><use href="#u-texto"/></svg>Texto<span class="etiqueta-ejemplo">ejemplo</span></span>
+            <h3>El velorio del angelito</h3>
+            <p>Rituales de despedida en la historia de Chile y lo que nos enseñan sobre la memoria.</p>
+            <span class="material-meta"><span>Ensayo · 15 min</span><span class="flecha" aria-hidden="true">→</span></span>
+          </article>
+          <article class="material">
+            <span class="material-tipo"><svg><use href="#u-podcast"/></svg>Podcast<span class="etiqueta-ejemplo">ejemplo</span></span>
+            <h3>Objetos que guardan voces</h3>
+            <p>Una conversación sobre el archivo, los recuerdos materiales y cómo sostienen el vínculo.</p>
+            <span class="material-meta"><span>Audio · 34 min</span><span class="flecha" aria-hidden="true">→</span></span>
+          </article>
+          <article class="material">
+            <span class="material-tipo"><svg><use href="#u-comunidad"/></svg>Comunidad<span class="etiqueta-ejemplo">ejemplo</span></span>
+            <h3>Círculos de acompañamiento</h3>
+            <p>Espacios de encuentro entre madres para compartir, escuchar y recordar juntas.</p>
+            <span class="material-meta"><span>Encuentros mensuales</span><span class="flecha" aria-hidden="true">→</span></span>
+          </article>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- ================= 2. COLECCIÓN ================= -->
+    <section data-vista="coleccion" hidden>
+      <section class="encabezado">
+        <p class="antetitulo">Altares</p>
+        <h1>En memoria</h1>
+        <p>Cada perfil guarda los objetos, fechas y palabras de un/a hijo/a. Puedes crearlos y completarlos poco a poco, cuando lo sientas.</p>
+      </section>
+      <div class="perfiles" id="perfiles">
+        <!-- Las tarjetas se crean desde <template id="t-perfil"> -->
+        <button class="perfil-tarjeta nueva" type="button" data-accion="nuevo-perfil">
+          <span class="mas" aria-hidden="true">+</span>
+          <span>Añadir un perfil</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= 3. EXPLORAR ================= -->
+    <section data-vista="explorar" hidden>
+      <section class="encabezado">
+        <p class="antetitulo">Explorar</p>
+        <h1>Álbum de recuerdos</h1>
+        <p>Una colección compartida de recuerdos publicados en altares no privados.</p>
+      </section>
+      <div class="album-explorar">
+        <div class="album" id="album" aria-label="Álbum digital de recuerdos">
+          <div class="album-lomo" aria-hidden="true"></div>
+          <div class="album-paginas">
+            <article class="album-pagina" id="pagina-izquierda" aria-label="Página izquierda"></article>
+            <article class="album-pagina" id="pagina-derecha" aria-label="Página derecha"></article>
+          </div>
+          <div class="album-hoja" id="album-hoja" aria-hidden="true" hidden>
+            <div class="album-cara album-frente" id="album-frente"></div>
+            <div class="album-cara album-reverso" id="album-reverso"></div>
+          </div>
+        </div>
+        <div class="album-controles">
+          <button class="btn btn-suave" id="album-anterior" type="button" aria-label="Páginas anteriores">← Anterior</button>
+          <p id="album-estado" role="status" aria-live="polite"></p>
+          <button class="btn btn-suave" id="album-siguiente" type="button" aria-label="Páginas siguientes">Siguiente →</button>
+          <button class="btn btn-principal" id="album-mezclar" type="button">Mezclar recuerdos</button>
+        </div>
+        <p id="album-mensaje" class="album-mensaje" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ================= 4. DETALLE DEL PERFIL ================= -->
+    <section data-vista="perfil" hidden>
+      <nav class="migas" aria-label="Ruta">
+        <a href="#/coleccion">Colección</a><span aria-hidden="true">/</span><span aria-current="page" data-campo="nombre"></span>
+      </nav>
+
+      <section class="perfil-cabecera">
+        <div class="retrato"></div>
+        <div>
+          <p class="antetitulo" data-campo="relacion"></p>
+          <h1 data-campo="nombre"></h1>
+          <p class="perfil-referencia" id="perfil-referencia" hidden>Ejemplo de referencia · solo lectura</p>
+          <p class="fechas" data-campo="fechas"></p>
+          <p class="frase" data-campo="frase"></p>
+          <p class="bio" data-campo="bio"></p>
+          <div class="acciones">
+            <button class="btn btn-suave" type="button" data-accion="editar-perfil">Editar perfil</button>
+            <button class="btn-texto" type="button" data-accion="eliminar-perfil">Eliminar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="archivo">
+        <div class="archivo-barra">
+          <div class="alternar" role="group" aria-label="Forma de ver los recuerdos">
+            <button type="button" data-accion="modo" data-modo="constelacion">Constelación</button>
+            <button type="button" data-accion="modo" data-modo="vitrina">Vitrina</button>
+          </div>
+          <div class="herramientas">
+            <button class="btn btn-suave" type="button" id="btn-unir" data-accion="unir"><svg><use href="#u-hilo"/></svg><span></span></button>
+            <button class="btn btn-principal" type="button" data-accion="nuevo-objeto"><svg><use href="#u-mas"/></svg>Añadir recuerdo</button>
+          </div>
+        </div>
+        <p class="pista" id="pista"></p>
+
+        <!-- Constelación: los nodos salen de <template id="t-nodo">, los hilos se dibujan en el SVG -->
+        <div class="constelacion" id="constelacion"><svg class="hilos" id="hilos" aria-hidden="true"></svg></div>
+        <!-- Vitrina: las piezas salen de <template id="t-pieza"> -->
+        <div class="vitrina" id="vitrina"></div>
+
+        <div class="vacio vitrina-vacia" id="vacio">
+          <p>Aún no hay recuerdos guardados. Puedes empezar por uno pequeño.</p>
+          <button class="btn btn-suave" type="button" data-accion="nuevo-objeto"><svg><use href="#u-mas"/></svg>Añadir el primero</button>
+        </div>
+      </section>
+    </section>
+
+    <!-- ================= 4. DETALLE DEL OBJETO ================= -->
+    <section data-vista="objeto" hidden>
+      <nav class="migas" aria-label="Ruta">
+        <a href="#/coleccion">Colección</a><span aria-hidden="true">/</span>
+        <a id="enlace-perfil" data-campo="perfil"></a><span aria-hidden="true">/</span>
+        <span aria-current="page" data-campo="nombre"></span>
+      </nav>
+
+      <article class="objeto">
+        <div class="objeto-escena">
+          <div class="pedestal" id="pedestal"></div>
+          <div class="objeto-nav">
+            <a class="btn-icono" id="anterior" aria-label="Recuerdo anterior"><svg><use href="#u-izq"/></svg></a>
+            <span data-campo="posicion"></span>
+            <a class="btn-icono" id="siguiente" aria-label="Recuerdo siguiente"><svg><use href="#u-der"/></svg></a>
+          </div>
+        </div>
+
+        <div class="objeto-texto">
+          <p class="antetitulo"><span data-campo="tipo"></span> · recuerdo de <span data-campo="perfil"></span></p>
+          <h1 data-campo="nombre"></h1>
+          <dl class="datos">
+            <div><dt>Fecha</dt><dd data-campo="fecha"></dd></div>
+            <div><dt>Dónde se guarda</dt><dd data-campo="lugar"></dd></div>
+          </dl>
+          <p class="descripcion" data-campo="descripcion"></p>
+
+          <h2 class="subtitulo">Su historia</h2>
+          <p class="historia" data-campo="historia"></p>
+
+          <h2 class="subtitulo">Unido a</h2>
+          <div class="uniones-lista" id="uniones"></div>
+          <p class="sin-uniones" id="sin-uniones">Aún no está unido a otros recuerdos. Puedes tender hilos desde la constelación.</p>
+
+          <div class="acciones">
+            <button class="btn btn-suave" type="button" data-accion="editar-objeto">Editar</button>
+            <label class="btn btn-suave"><span id="foto-texto"></span><input type="file" id="foto-objeto" accept="image/*" hidden></label>
+            <button class="btn-texto" type="button" data-accion="eliminar-objeto">Eliminar</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= Ruta no encontrada ================= -->
+    <section data-vista="nada" class="no-encontrado" hidden>
+      <h1>Este lugar está vacío</h1>
+      <p>No encontramos lo que buscabas.</p>
+      <a class="btn btn-suave" href="#/coleccion">Volver a la colección</a>
+    </section>
+  </main>
+
+  <footer class="pie" id="pie">
+    <p>Cenotaphio · Proyecto de título de Michelle Acuña.</p>
+    <p id="estado-respaldo" role="status" aria-live="polite">Los ejemplos son de referencia; tus altares se respaldan al iniciar sesión.</p>
+    <button class="btn-texto" id="importar-datos-locales" type="button" hidden>Importar datos de este navegador</button>
+    <button class="btn-texto" id="reintentar-respaldo" type="button" hidden>Reintentar respaldo</button>
+  </footer>
+
+  <!-- ============ Plantillas que el JS copia y rellena ============ -->
+  <template id="t-perfil">
+    <a class="perfil-tarjeta">
+      <div class="retrato"></div>
+      <h2 data-campo="nombre"></h2>
+      <p class="fechas" data-campo="anios"></p>
+      <p class="frase" data-campo="frase"></p>
+      <p class="perfil-meta"><span data-campo="recuerdos"></span></p>
+      <small class="perfil-referencia" data-campo="referencia"></small>
+    </a>
+  </template>
+
+  <template id="t-nodo">
+    <button class="nodo" type="button">
+      <span class="nodo-visual"></span>
+      <span class="nodo-nombre" data-campo="nombre"></span>
+    </button>
+  </template>
+
+  <template id="t-pieza">
+    <a class="pieza">
+      <span class="pieza-visual"></span>
+      <span class="pieza-nombre" data-campo="nombre"></span>
+      <span class="pieza-fecha" data-campo="fecha"></span>
+    </a>
+  </template>
+
+  <template id="t-union">
+    <a class="union">
+      <span class="union-visual"></span>
+      <span><strong data-campo="nombre"></strong><em data-campo="nota"></em></span>
+    </a>
+  </template>
+
+  <!-- ============ Ventanas (formularios) ============ -->
+  <!-- El botón "Guardar" va primero en el código para que Enter guarde; el CSS lo muestra al final. -->
+  <dialog class="modal" id="d-perfil" aria-labelledby="d-perfil-titulo">
+    <form class="modal-caja formulario" method="dialog">
+      <h2 id="d-perfil-titulo"></h2>
+      <label class="campo"><span>Nombre</span><input name="nombre" required placeholder="Su nombre"></label>
+      <label class="campo"><span>Quién es para ti</span><input name="relacion" placeholder="Hija, hijo, hije…"></label>
+      <div class="fila">
+        <label class="campo"><span>Nacimiento</span><input type="date" name="nacimiento"></label>
+        <label class="campo"><span>Partida</span><input type="date" name="partida"></label>
+      </div>
+      <label class="campo"><span>Una frase</span><input name="frase" placeholder="Algo que lo o la describa"></label>
+      <label class="campo"><span>Unas palabras</span><textarea name="bio" rows="3" placeholder="Lo que quieras contar…"></textarea></label>
+      <label class="campo-privacidad"><input name="privado" type="checkbox"><span>Hacer este altar privado</span></label>
+      <small class="privacidad-ayuda">Los altares privados no aparecen en Explorar. Su dirección tampoco se envía al geocodificador mientras sean privados.</small>
+      <label class="campo"><span>Dirección del altar</span><input name="direccion" type="text" maxlength="250" autocomplete="street-address" placeholder="Calle, ciudad, país"></label>
+      <small class="ubicacion-ayuda">Opcional. Si el altar es público, al guardar la dirección se envía a OpenStreetMap Nominatim para ubicar los recuerdos en el mapa.</small>
+      <p class="ubicacion-estado" id="ubicacion-estado" role="status" aria-live="polite" hidden></p>
+      <input name="latitud" type="hidden">
+      <input name="longitud" type="hidden">
+      <div class="campo"><span>Retrato</span><label class="campo-imagen"><input type="file" name="foto" accept="image/*"><span class="previa"></span></label></div>
+      <div class="formulario-acciones">
+        <button class="btn btn-principal" value="ok">Guardar</button>
+        <button class="btn btn-suave" type="button" data-cerrar>Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="d-objeto" aria-labelledby="d-objeto-titulo">
+    <form class="modal-caja formulario" method="dialog">
+      <h2 id="d-objeto-titulo"></h2>
+      <label class="campo"><span>Nombre del objeto</span><input name="nombre" required placeholder="Sus zapatitos, una carta…"></label>
+      <label class="campo"><span>Qué es</span><input name="tipo" required maxlength="80" placeholder="Por ejemplo, una pulsera del hospital"></label>
+      <div class="fila">
+        <label class="campo"><span>Fecha</span><input type="date" name="fecha"></label>
+        <label class="campo"><span>Dónde se guarda</span><input name="lugar" placeholder="Una cajita, un cajón…"></label>
+      </div>
+      <label class="campo"><span>En pocas palabras</span><textarea name="descripcion" rows="2"></textarea></label>
+      <label class="campo"><span>Su historia</span><textarea name="historia" rows="4" placeholder="Quién lo trajo, qué recuerdas al tocarlo…"></textarea></label>
+      <div class="campo"><span>Fotografía</span><label class="campo-imagen"><input type="file" name="foto" accept="image/*"><span class="previa"></span></label></div>
+      <div class="formulario-acciones">
+        <button class="btn btn-principal" value="ok">Guardar</button>
+        <button class="btn btn-suave" type="button" data-cerrar>Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="d-hilo" aria-labelledby="d-hilo-titulo">
+    <form class="modal-caja formulario" method="dialog">
+      <h2 id="d-hilo-titulo">Un hilo entre recuerdos</h2>
+      <p class="intro"></p>
+      <label class="campo"><span>¿Qué los une?</span><input name="nota" placeholder="el mismo día, un regalo de la abuela…"></label>
+      <div class="formulario-acciones">
+        <button class="btn btn-principal" value="ok">Tender el hilo</button>
+        <button class="btn-texto" value="deshacer" formnovalidate>Deshacer la unión</button>
+        <button class="btn btn-suave" type="button" data-cerrar>Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="d-confirmar" aria-labelledby="d-confirmar-titulo">
+    <form class="modal-caja formulario" method="dialog">
+      <h2 id="d-confirmar-titulo"></h2>
+      <p></p>
+      <div class="formulario-acciones">
+        <button class="btn btn-grave" value="ok"></button>
+        <button class="btn btn-suave" type="button" data-cerrar>Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       TEXTOS QUE APARECEN AL USAR LA PÁGINA
+       (avisos, títulos de ventanas, mensajes cuando falta un dato, etc.)
+
+       • Cambia solo las palabras que están entre > y <.
+       • Lo que va entre llaves, como {nombre} o {n}, se reemplaza solo
+         por el dato que corresponde: déjalo escrito tal cual.
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <div id="textos" hidden>
+    <!-- Títulos de las ventanas -->
+    <p data-texto="perfil-nuevo">Un nuevo perfil</p>
+    <p data-texto="perfil-editar">Editar perfil</p>
+    <p data-texto="recuerdo-nuevo">Guardar un recuerdo</p>
+    <p data-texto="recuerdo-editar">Editar recuerdo</p>
+    <p data-texto="hilo-entre">{a} y {b}</p>
+    <p data-texto="elegir-imagen">Elegir una imagen (opcional)</p>
+
+    <!-- Página de un perfil -->
+    <p data-texto="relacion-vacia">Hije</p>
+    <p data-texto="fechas-vacias">Fechas por completar</p>
+    <p data-texto="rango">{desde} — {hasta}</p>
+    <p data-texto="unir">Unir recuerdos</p>
+    <p data-texto="terminar-unir">Terminar de unir</p>
+    <p data-texto="pista-normal">Arrastra los recuerdos para ordenarlos a tu manera. Tócalos para mirarlos de cerca.</p>
+    <p data-texto="pista-uniendo">Elige dos recuerdos para tender un hilo entre ellos. Toca un hilo para cambiar su nota o deshacerlo.</p>
+    <p data-texto="pista-seleccion">Elige otro recuerdo para unirlo con «{nombre}».</p>
+    <p data-texto="pista-vitrina">Los recuerdos, ordenados en el tiempo.</p>
+
+    <!-- Tarjetas de la colección -->
+    <p data-texto="recuerdos-uno">1 recuerdo</p>
+    <p data-texto="recuerdos-varios">{n} recuerdos</p>
+
+    <!-- Página de un recuerdo -->
+    <p data-texto="sin-fecha">Sin fecha</p>
+    <p data-texto="sin-lugar">—</p>
+    <p data-texto="sin-historia">Todavía no hay una historia escrita para este recuerdo.</p>
+    <p data-texto="tipo-desconocido">Recuerdo</p>
+    <p data-texto="posicion">{n} / {total}</p>
+    <p data-texto="foto-subir">Subir fotografía</p>
+    <p data-texto="foto-cambiar">Cambiar fotografía</p>
+
+    <!-- Ventanas de confirmación -->
+    <p data-texto="borrar-perfil-titulo">¿Eliminar el perfil de {nombre}?</p>
+    <p data-texto="borrar-perfil-texto">Se borrarán también sus recuerdos. Esta acción no se puede deshacer.</p>
+    <p data-texto="borrar-perfil-boton">Eliminar perfil</p>
+    <p data-texto="borrar-recuerdo-titulo">¿Eliminar «{nombre}»?</p>
+    <p data-texto="borrar-recuerdo-texto">El recuerdo y sus hilos se borrarán de este archivo.</p>
+    <p data-texto="borrar-recuerdo-boton">Eliminar recuerdo</p>
+    <!-- Avisos que aparecen abajo por unos segundos -->
+    <p data-texto="aviso-guardado">Guardado con cuidado.</p>
+    <p data-texto="aviso-foto">La fotografía quedó guardada.</p>
+    <p data-texto="aviso-error">No se pudo guardar: prueba con una imagen más liviana.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       PERFILES DE EJEMPLO
+       Son los que aparecen en la Colección. Si cambias algo aquí, la página
+       vuelve a cargar estos ejemplos (se pierde lo que se agregó desde el navegador).
+
+       • Cada <article> es un perfil. Para crear otro, copia un <article> completo
+         (desde <article hasta </article>) y cambia sus textos y su código.
+       • Las fechas van como año-mes-día: 2019-03-14. Si no hay fecha, deja vacío: <p data-dato="nacimiento"></p>
+       • Cada <section class="recuerdo"> es un objeto del perfil.
+         data-tipo = el dibujo que usa: zapatito, osito, mechon, pulsera, chupete, foto, ecografia,
+                     carta, dibujo, vhs, cajita, mantita, autito, flor, diente o sonajero.
+         data-x / data-y = dónde aparece en la constelación (de 0 a 100: izquierda→derecha, arriba→abajo).
+       • La historia puede tener varios párrafos: uno por cada <p>.
+       • Cada <p class="hilo"> une dos recuerdos. En data-une van sus dos códigos separados por un espacio,
+         y el texto es la nota del hilo.
+       • data-tono = color del retrato (un número de 0 a 360: 0 rojo, 40 dorado, 150 verde, 215 azul, 300 lila).
+       • data-direccion = dirección del altar que se busca con OpenStreetMap Nominatim para ubicarlo en Explorar.
+       • data-latitud / data-longitud = compatibilidad con ubicaciones guardadas en versiones anteriores.
+       • Para usar una foto real, agrega data-foto="fotos/nombre-del-archivo.jpg" al <article> (retrato)
+         o a un <section class="recuerdo"> (foto del objeto), y guarda la imagen en la carpeta "fotos".
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <template id="ejemplos">
+    <!-- ─────────── AMPARO ─────────── -->
+    <article data-codigo="amparo" data-tono="350" data-direccion="" data-latitud="" data-longitud="" data-foto="files/Imagenes/2023-05-11__ap__abiyoga__actionsampler__024.jpg">
+      <h3 data-dato="nombre">Amparo</h3>
+      <p data-dato="relacion">Hija</p>
+      <p data-dato="nacimiento">2019-03-14</p>
+      <p data-dato="partida">2019-03-20</p>
+      <p data-dato="frase">Seis días que llenaron una vida entera.</p>
+      <p data-dato="bio">Nació un jueves de otoño. Su mamá guarda la pulsera del hospital y la mantita con la que la envolvieron por primera vez. [Texto de ejemplo]</p>
+
+      <!-- Recuerdos -->
+      <section class="recuerdo" data-codigo="am1" data-tipo="pulsera" data-x="28" data-y="34">
+        <h4 data-dato="nombre">Pulsera del hospital</h4>
+        <p data-dato="fecha">2019-03-14</p>
+        <p data-dato="lugar">Cajita de madera</p>
+        <p data-dato="descripcion">Con su nombre escrito a mano por la matrona.</p>
+        <div data-dato="historia">
+          <p>La tinta ya está un poco borrosa, pero todavía se lee "Amparo" y la hora en que nació.</p>
+          <p>Aquí la madre puede contar la historia completa del objeto: dónde estaba, quién lo trajo, qué siente al tocarlo. [Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="am2" data-tipo="mantita" data-x="55" data-y="22">
+        <h4 data-dato="nombre">Mantita rosada</h4>
+        <p data-dato="fecha">2019-03-14</p>
+        <p data-dato="lugar">Primer cajón del velador</p>
+        <p data-dato="descripcion">Tejida por su abuela durante el embarazo.</p>
+        <div data-dato="historia">
+          <p>Su abuela empezó a tejerla apenas supo la noticia. Tiene un punto que se soltó en una esquina y nadie ha querido arreglarlo. [Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="am3" data-tipo="mechon" data-x="74" data-y="58">
+        <h4 data-dato="nombre">Mechón de pelo</h4>
+        <p data-dato="fecha">2019-03-20</p>
+        <p data-dato="lugar">Sobre de papel mantequilla</p>
+        <p data-dato="descripcion">Guardado en un sobre, atado con una cinta blanca.</p>
+        <div data-dato="historia">
+          <p>Una enfermera ofreció cortarlo. Fue uno de los gestos más amables de esos días. [Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="am4" data-tipo="foto" data-x="44" data-y="72">
+        <h4 data-dato="nombre">Primera fotografía</h4>
+        <p data-dato="fecha">2019-03-15</p>
+        <p data-dato="lugar">Marco en la repisa</p>
+        <p data-dato="descripcion">La única foto donde está con los ojos abiertos.</p>
+        <div data-dato="historia">
+          <p>Tomada con el celular de su papá, a contraluz. [Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="am5" data-tipo="carta" data-x="16" data-y="70">
+        <h4 data-dato="nombre">Carta de mamá</h4>
+        <p data-dato="fecha">2020-03-14</p>
+        <p data-dato="lugar">Entre las páginas de un libro</p>
+        <p data-dato="descripcion">Escrita en su primer cumpleaños.</p>
+        <div data-dato="historia">
+          <p>Cada 14 de marzo se agrega una línea nueva. [Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="am6" data-tipo="flor" data-x="86" data-y="26">
+        <h4 data-dato="nombre">Flor de la despedida</h4>
+        <p data-dato="fecha">2019-03-22</p>
+        <p data-dato="lugar">Prensada en un cuaderno</p>
+        <p data-dato="descripcion">Una rosa blanca, ya seca.</p>
+        <div data-dato="historia">
+          <p>[Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <!-- Hilos: une dos recuerdos por su código -->
+      <p class="hilo" data-une="am1 am2">el primer día</p>
+      <p class="hilo" data-une="am2 am3">guardados juntos</p>
+      <p class="hilo" data-une="am4 am1">en el hospital</p>
+      <p class="hilo" data-une="am5 am4">la mira cada aniversario</p>
+      <p class="hilo" data-une="am3 am6">la despedida</p>
+    </article>
+
+    <!-- ─────────── LUZ ─────────── -->
+    <article data-codigo="luz" data-tono="42" data-direccion="" data-latitud="" data-longitud="" data-foto="files/Imagenes/cb6153019502c7a8ecc71e42045aa93d.jpg">
+      <h3 data-dato="nombre">Luz</h3>
+      <p data-dato="relacion">Hija</p>
+      <p data-dato="nacimiento"></p>
+      <p data-dato="partida">2022-08-03</p>
+      <p data-dato="frase">Te esperamos treinta y dos semanas.</p>
+      <p data-dato="bio">No alcanzó a llegar a casa, pero su nombre se dice en voz alta todos los días. [Texto de ejemplo]</p>
+
+      <!-- Recuerdos -->
+      <section class="recuerdo" data-codigo="lu1" data-tipo="ecografia" data-x="30" data-y="40">
+        <h4 data-dato="nombre">Ecografía de las 20 semanas</h4>
+        <p data-dato="fecha">2022-04-10</p>
+        <p data-dato="lugar">Pegada en el refrigerador</p>
+        <p data-dato="descripcion">La primera vez que escuchamos su corazón.</p>
+        <div data-dato="historia">
+          <p>[Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="lu2" data-tipo="chupete" data-x="62" data-y="30">
+        <h4 data-dato="nombre">Chupete sin estrenar</h4>
+        <p data-dato="fecha">2022-06-01</p>
+        <p data-dato="lugar">Cajita de recuerdos</p>
+        <p data-dato="descripcion">Todavía en su envoltorio.</p>
+        <div data-dato="historia">
+          <p>[Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="lu3" data-tipo="carta" data-x="72" data-y="70">
+        <h4 data-dato="nombre">Carta de su hermana</h4>
+        <p data-dato="fecha">2023-08-03</p>
+        <p data-dato="lugar">Cajita de recuerdos</p>
+        <p data-dato="descripcion">Escrita con lápices de colores, un año después.</p>
+        <div data-dato="historia">
+          <p>[Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <section class="recuerdo" data-codigo="lu4" data-tipo="cajita" data-x="40" data-y="72">
+        <h4 data-dato="nombre">Cajita de recuerdos</h4>
+        <p data-dato="fecha">2022-08-05</p>
+        <p data-dato="lugar">Clóset del dormitorio</p>
+        <p data-dato="descripcion">Guarda su huella, su pulsera y una foto.</p>
+        <div data-dato="historia">
+          <p>[Texto de ejemplo]</p>
+        </div>
+      </section>
+
+      <!-- Hilos: une dos recuerdos por su código -->
+      <p class="hilo" data-une="lu1 lu2">la espera</p>
+      <p class="hilo" data-une="lu2 lu4">guardado aquí</p>
+      <p class="hilo" data-une="lu3 lu4">guardada aquí</p>
+    </article>
+
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
