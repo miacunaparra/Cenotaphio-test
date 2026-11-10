@@ -10,8 +10,11 @@ const esc = s => String(s).replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
 const clon = id => $('#' + id).content.firstElementChild.cloneNode(true);
 const leer = k => { try { return localStorage.getItem(k); } catch { return null; } };
 const escribir = (k, v) => { try { localStorage.setItem(k, v); return true; } catch { return false; } };
+const modoPruebasLocal = (location.hostname === 'miacunaparra.github.io' && location.pathname.startsWith('/gruta/'))
+  || new URLSearchParams(location.search).get('modo') === 'pruebas';
+const claveDatosPrueba = 'memento.gruta.pruebas.v1';
 const configSupabase = window.MEMENTO_SUPABASE_CONFIG;
-const clienteSupabase = configSupabase?.url && configSupabase?.anonKey && window.supabase
+const clienteSupabase = !modoPruebasLocal && configSupabase?.url && configSupabase?.anonKey && window.supabase
   ? window.supabase.createClient(configSupabase.url, configSupabase.anonKey)
   : null;
 
@@ -59,6 +62,27 @@ const perfilesVisibles = () => [...(estado?.perfiles || []), ...referencias];
 const perfilValido = p => p && typeof p.id === 'string' && typeof p.nombre === 'string'
   && Array.isArray(p.objetos) && p.objetos.every(o => o && typeof o.id === 'string')
   && Array.isArray(p.conexiones) && p.conexiones.every(c => c && typeof c.a === 'string' && typeof c.b === 'string');
+
+if (modoPruebasLocal) {
+  try {
+    const guardado = leer(claveDatosPrueba);
+    if (guardado) {
+      const datos = JSON.parse(guardado);
+      if (datos.version !== 1 || !Array.isArray(datos.perfiles) || datos.perfiles.some(p => !perfilValido(p))) {
+        throw new Error('Los datos de prueba guardados no tienen el formato esperado.');
+      }
+      estado = { firma, perfiles: datos.perfiles };
+    } else {
+      estado = { firma, perfiles: [] };
+    }
+    $('#estado-respaldo').textContent = 'Modo de prueba: los cambios se guardan solo en este navegador.';
+  } catch (error) {
+    console.error('No se pudieron cargar los datos locales de prueba.', error);
+    errorCarga = 'No se pudieron cargar los datos de prueba de este navegador.';
+    $('#estado-respaldo').textContent = errorCarga;
+  }
+}
+
 let recuerdosAlbum = [], indiceAlbum = 0, albumCargando = false, albumListo = false, albumPromesa, albumTimer;
 
 const mezclar = elementos => {
@@ -71,9 +95,20 @@ const mezclar = elementos => {
 };
 
 function guardar() {
-  if (!estado || !usuarioActual || !clienteSupabase) return;
-  const userId = usuarioActual.id;
+  if (!estado) return;
   const respaldo = { version: 1, perfiles: JSON.parse(JSON.stringify(estado.perfiles)) };
+  if (modoPruebasLocal) {
+    const guardado = escribir(claveDatosPrueba, JSON.stringify(respaldo));
+    errorRespaldo = !guardado;
+    $('#estado-respaldo').textContent = guardado
+      ? 'Modo de prueba: los cambios se guardaron en este navegador.'
+      : 'No se pudieron guardar los datos de prueba. Libera espacio e inténtalo de nuevo.';
+    $('#reintentar-respaldo').hidden = guardado;
+    if (!guardado) aviso('No se pudieron guardar los datos de prueba.');
+    return Promise.resolve();
+  }
+  if (!usuarioActual || !clienteSupabase) return;
+  const userId = usuarioActual.id;
   $('#estado-respaldo').textContent = 'Guardando respaldo…';
   errorRespaldo = false;
   colaRespaldo = colaRespaldo.then(async () => {
@@ -240,7 +275,7 @@ function render(nueva) {
   const navActual = vista === 'inicio' ? 'inicio' : vista === 'explorar' ? 'explorar' : 'coleccion';
   $$('[data-nav]').forEach(a => a.dataset.nav === navActual
     ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  if (authLista && vista === 'coleccion' && !usuarioActual && !$('#acceso').open) {
+  if (!modoPruebasLocal && authLista && vista === 'coleccion' && !usuarioActual && !$('#acceso').open) {
     mostrarAcceso(!clienteSupabase
       ? 'Falta configurar Supabase para entrar a Mi altar. Sigue las instrucciones de mixi-app/SUPABASE.md.'
       : errorCarga);
@@ -254,7 +289,7 @@ function render(nueva) {
 
 function pintarColeccion() {
   const lista = $('#perfiles');
-  $('.perfil-tarjeta.nueva', lista).hidden = !usuarioActual;
+  $('.perfil-tarjeta.nueva', lista).hidden = (!usuarioActual && !modoPruebasLocal) || !estado;
   $$('.perfil-tarjeta:not(.nueva)', lista).forEach(n => n.remove());
   lista.prepend(...perfilesVisibles().map(p => {
     const n = clon('t-perfil');
@@ -976,6 +1011,9 @@ if (!clienteSupabase) {
   authLista = true;
   $('#form-acceso').hidden = true;
   $('#reintentar-carga').hidden = true;
+  if (modoPruebasLocal && !errorCarga) {
+    $('#estado-respaldo').textContent = 'Modo de prueba: los cambios se guardan solo en este navegador.';
+  }
   render(true);
 } else {
   clienteSupabase.auth.getSession().then(({ data, error }) => {
@@ -1135,5 +1173,5 @@ $('#acceso').addEventListener('cancel', e => {
 });
 $('#acceso').addEventListener('close', () => {
   $('#seguir-explorando').hidden = false;
-  if (!usuarioActual && location.hash === '#/coleccion') location.hash = '#/explorar';
+  if (!modoPruebasLocal && !usuarioActual && location.hash === '#/coleccion') location.hash = '#/explorar';
 });

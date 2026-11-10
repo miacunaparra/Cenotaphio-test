@@ -1,6 +1,10 @@
 # Configurar inicio de sesión y respaldo
 
-La aplicación deja Inicio y Explorar disponibles sin iniciar sesión. Al entrar en **Mi altar**, solicita una cuenta mediante una ventana de acceso. Usa Supabase Auth y una fila JSON privada por usuario para respaldar sus altares. Los ejemplos incluidos en la página son de solo lectura y no se copian al respaldo personal.
+La aplicación deja Inicio y Explorar disponibles sin iniciar sesión. En la publicación de prueba de Gruta, **Mi altar** también se puede usar sin cuenta y guarda los cambios en el almacenamiento local de ese navegador. Fuera de ese modo, la sección solicita una cuenta mediante Supabase Auth y respalda los altares en una fila JSON privada por usuario. Los ejemplos incluidos en la página son de solo lectura y no se copian al respaldo personal.
+
+## Modo de prueba de Gruta
+
+En `https://miacunaparra.github.io/gruta/`, Mi altar funciona sin iniciar sesión y los perfiles se guardan solo en el navegador actual; no se sincronizan con Supabase ni con otros dispositivos. Para volver a empezar, borra los datos del sitio en el navegador. En desarrollo local, activa el mismo comportamiento agregando `?modo=pruebas` a la URL.
 
 ## Preparar el proyecto
 
