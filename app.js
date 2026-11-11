@@ -10,9 +10,14 @@ const esc = s => String(s).replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
 const clon = id => $('#' + id).content.firstElementChild.cloneNode(true);
 const leer = k => { try { return localStorage.getItem(k); } catch { return null; } };
 const escribir = (k, v) => { try { localStorage.setItem(k, v); return true; } catch { return false; } };
+const esSitioPruebaCenotaphio = location.hostname === 'miacunaparra.github.io'
+  && location.pathname.startsWith('/Cenotaphio-test/');
 const modoPruebasLocal = (location.hostname === 'miacunaparra.github.io' && location.pathname.startsWith('/gruta/'))
+  || esSitioPruebaCenotaphio
   || new URLSearchParams(location.search).get('modo') === 'pruebas';
-const claveDatosPrueba = 'memento.gruta.pruebas.v1';
+const claveDatosPrueba = esSitioPruebaCenotaphio
+  ? 'memento.cenotaphio-test.pruebas.v1'
+  : 'memento.gruta.pruebas.v1';
 const configSupabase = window.MEMENTO_SUPABASE_CONFIG;
 const clienteSupabase = !modoPruebasLocal && configSupabase?.url && configSupabase?.anonKey && window.supabase
   ? window.supabase.createClient(configSupabase.url, configSupabase.anonKey)
